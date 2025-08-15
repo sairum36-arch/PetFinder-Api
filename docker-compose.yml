@@ -1,0 +1,17 @@
+
+version: '3.8'
+services:
+  postgres-db:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: pet-tracker-database
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1
+      - POSTGRES_DB=pet_tracker
+    ports:
+      - "5433:5432"
+    volumes:
+      - pet-tracker-data:/var/lib/postgresql/data
+    restart: unless-stopped
+volumes:
+  pet-tracker-data:
