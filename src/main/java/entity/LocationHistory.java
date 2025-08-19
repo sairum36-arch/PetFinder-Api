@@ -9,7 +9,7 @@ import lombok.Setter;
 import java.awt.*;
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
+
 @Getter
 @Setter
 @Entity

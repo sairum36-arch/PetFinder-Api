@@ -10,7 +10,7 @@ import lombok.Setter;
 
 import org.locationtech.jts.geom.Polygon;
 
-@NoArgsConstructor
+
 @Getter
 @Setter
 @Entity

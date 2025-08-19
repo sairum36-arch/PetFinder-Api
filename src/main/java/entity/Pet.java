@@ -8,7 +8,7 @@ import lombok.Setter;
 
 import java.util.List;
 
-@NoArgsConstructor
+
 @Getter
 @Setter
 @Entity
@@ -31,5 +31,6 @@ public class Pet {
     private Collar collar;
     @OneToMany(mappedBy = "pet")
     private List<GeoFence> geoFences;
-
+    @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
+    private List<PetMedia> mediaFiles;
 }
