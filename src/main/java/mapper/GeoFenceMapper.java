@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface GeoFenceMapper {
-    GeoFenceDTO toGeoFenceDTO(GeoFence geoFence);
-    GeoFence toGeoFenceEntity(GeoFenceDTO geoFence);
-    List<GeoFenceDTO> toGeoFenceDTOList(List<GeoFence> geoFence);
+    GeoFenceDTO toDTO(GeoFence geoFence);
+    GeoFence toEntity(GeoFenceDTO geoFence);
+    List<GeoFenceDTO> toDTOList(List<GeoFence> geoFence);
 }

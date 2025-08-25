@@ -9,8 +9,8 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface PetMapper {
-    Pet toPetWithCollarStatusDto(PetWithCollarsStatus petInfo);
+    Pet toEntity(PetWithCollarsStatus petInfo);
     @Mapping(target = "petMainPhotoUrl", ignore= true)
-    PetWithCollarsStatus toPetWithCollarStatusEntity(Pet pet);
-    List<PetWithCollarsStatus> toPetWithCollarStatusEntityList(List<Pet> pets);
+    PetWithCollarsStatus toDto(Pet pet);
+    List<PetWithCollarsStatus> toDtoList(List<Pet> pets);
 }
