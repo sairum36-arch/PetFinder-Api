@@ -1,17 +1,44 @@
-
-version: '3.8'
 services:
+  # --- СЕРВИС №1: БАЗА ДАННЫХ ---
   postgres-db:
     image: postgis/postgis:15-3.3-alpine
-    container_name: pet-tracker-database
+    container_name: petfinder-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1
-      - POSTGRES_DB=pet_tracker
-    ports:
-      - "5433:5432"
+      - POSTGRES_DB=petFinder
     volumes:
-      - pet-tracker-data:/var/lib/postgresql/data
+      - petfinder-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d petFinder"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
+
+  # --- СЕРВИС №2: ВАШЕ SPRING-ПРИЛОЖЕНИЕ ---
+  app:
+    build: .
+    container_name: petfinder-app
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+
+    # --- УБИРАЕМ environment ПОЛНОСТЬЮ ---
+
+    command: [
+      "java",
+      "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
+      "-jar", "app.jar",
+      "--spring.datasource.url=jdbc:postgresql://postgres-db:5432/petFinder",
+      "--spring.datasource.username=postgres",
+      "--spring.datasource.password=1"
+    ]
+
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+
 volumes:
-  pet-tracker-data:
+  petfinder-db-data:

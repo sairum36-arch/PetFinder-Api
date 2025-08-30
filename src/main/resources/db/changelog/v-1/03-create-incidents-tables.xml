@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20240525-3-xml-version" author="Nikita">
+        <createTable tableName="incidents">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="pet_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="reward" type="NUMERIC(10, 2)"/>
+            <column name="last_known_location" type="GEOGRAPHY(Point, 4326)"/>
+            <column name="started_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="owners_notes" type="TEXT"/>
+            <column name="resolved_by_user_id" type="BIGINT"/>
+        </createTable>
+        <createTable tableName="incident_responses">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="incident_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="helper_user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="responded_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="incident_messages">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="incident_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sender_user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="message_text" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sent_at" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="incidents" baseColumnNames="pet_id" constraintName="fk_incidents_to_pets" referencedTableName="pets" referencedColumnNames="id" onDelete="RESTRICT"/>
+        <addForeignKeyConstraint baseTableName="incidents" baseColumnNames="resolved_by_user_id" constraintName="fk_incidents_to_users" referencedTableName="users" referencedColumnNames="id" onDelete="SET NULL"/>
+        <addForeignKeyConstraint baseTableName="incident_responses" baseColumnNames="incident_id" constraintName="fk_responses_to_incidents" referencedTableName="incidents" referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="incident_responses" baseColumnNames="helper_user_id" constraintName="fk_responses_to_users" referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="incident_messages" baseColumnNames="incident_id" constraintName="fk_messages_to_incidents" referencedTableName="incidents" referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="incident_messages" baseColumnNames="sender_user_id" constraintName="fk_messages_to_users" referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
+
+</databaseChangeLog>
+

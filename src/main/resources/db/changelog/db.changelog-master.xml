@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <include file="v-1/01-create-user-table.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/02-create-pets-table.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/03-create-incidents-tables.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/04-insert-initial-data.xml" relativeToChangelogFile="true"/>
+</databaseChangeLog>
+

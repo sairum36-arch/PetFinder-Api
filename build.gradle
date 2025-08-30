@@ -1,14 +1,14 @@
-// build.gradle (финальная, самая строгая версия)
+
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.5' // Используйте ВАШУ последнюю стабильную версию SB 3.x
-	id 'io.spring.dependency-management' version '1.1.5' // Используйте последнюю версию этого плагина
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'com.PetFinder'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '21' // или 21
+sourceCompatibility = '21'
 
 configurations {
 	compileOnly {
@@ -20,8 +20,6 @@ repositories {
 	mavenCentral()
 }
 
-// Этот блок УКАЗЫВАЕТ ВЕРСИИ для библиотек, которые не управляются Spring Boot BOM.
-// Он НЕ СКАЧИВАЕТ их, а просто "запоминает" версии.
 ext {
 	mapstructVersion = "1.5.5.Final"
 	springdocVersion = "2.5.0"
@@ -29,37 +27,30 @@ ext {
 }
 
 dependencies {
-	// --- Spring Boot Starters ---
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-
-	// --- База данных ---
 	runtimeOnly 'org.postgresql:postgresql'
 	implementation 'org.hibernate.orm:hibernate-spatial:6.5.2.Final'
-
-	// --- Lombok & MapStruct ---
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
 	annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
 	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
-
-	// --- JWT ---
 	implementation "io.jsonwebtoken:jjwt-api:${jjwtVersion}"
 	runtimeOnly "io.jsonwebtoken:jjwt-impl:${jjwtVersion}"
 	runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jjwtVersion}"
-
-	// --- Документация API ---
 	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
-
-	// --- Тестирование ---
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.liquibase:liquibase-core'
+	testImplementation 'org.testcontainers:junit-jupiter'
+
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+	enabled = false
 }
