@@ -33,6 +33,7 @@ public class Incident {
     private List<IncidentMessage> messages;
     @OneToMany(mappedBy = "incident")
     private List<IncidentResponse> responses;
+    private Pet pet;
 
 
 }

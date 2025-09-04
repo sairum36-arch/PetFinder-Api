@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.locationtech.jts.geom.Point;
 import java.util.List;
 
 
@@ -26,6 +27,7 @@ public class Collar {
     private Byte batteryLevel;
     @OneToMany(mappedBy = "collar")
     private List<LocationHistory> locationHistory;
+    private Point lastLocation;
 
 
 }
