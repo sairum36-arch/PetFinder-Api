@@ -6,15 +6,17 @@
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="20240525-1-xml-version" author="Nikita">
+
         <createTable tableName="users">
             <column name="id" type="BIGSERIAL" autoIncrement="true">
-                <constraints primaryKey="true" nullable="true"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="full_name" type="VARCHAR(255)"/>
             <column name="phone_number" type="VARCHAR(50)">
                 <constraints unique="true" nullable="false"/>
             </column>
         </createTable>
+
         <createTable tableName="credentials">
             <column name="user_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false"/>
@@ -29,6 +31,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
         <createTable tableName="notifications">
             <column name="id" type="BIGSERIAL" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -39,9 +42,7 @@
             <column name="type" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
-            <column name="message" type="TEXT">
-                <constraints nullable="false"/>
-            </column>
+            <column name="message" type="TEXT"/>
             <column name="is_read" type="BOOLEAN" defaultValueBoolean="false">
                 <constraints nullable="false"/>
             </column>
@@ -49,19 +50,12 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="credentials"
-                                 baseColumnNames="user_id"
-                                 constraintName="fk_credentials_to_users"
-                                 referencedTableName="users"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
 
-        <addForeignKeyConstraint baseTableName="notifications"
-                                 baseColumnNames="user_id"
-                                 constraintName="fk_notifications_to_users"
-                                 referencedTableName="users"
-                                 referencedColumnNames="id"
-                                 onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="credentials" baseColumnNames="user_id" constraintName="fk_credentials_to_users" referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="notifications" baseColumnNames="user_id" constraintName="fk_notifications_to_users" referencedTableName="users" referencedColumnNames="id" onDelete="CASCADE"/>
+
     </changeSet>
+
 </databaseChangeLog>
 
+  

@@ -15,4 +15,5 @@ public class PetDetailResponse {
     private Long weight;
     private String description;
     private CollarDto collar;
+    private String petMainPhotoUrl;
 }

@@ -13,10 +13,9 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {PetMapper.class, GeoFenceMapper.class})
+@Mapper(componentModel = "spring", uses = {PetMapper.class})
 public interface UserMapper {
     @Mapping(target = "pets", ignore = true)
-    @Mapping(target = "geofences", ignore = true)
     @Mapping(target = "activeCollarsCount", expression = "java(user.getPets().size())")
     UserProfileResponse toBaseProfileDto(User user);
     default UserProfileResponse toFullProfile(User user, PetService petService){

@@ -12,7 +12,8 @@ import org.springframework.data.repository.query.Param;
 import java.awt.*;
 
 public interface IncidentRepository extends JpaRepository<Incident, Long> {
-    boolean existsByPetAndStatus(Pet pet, IncidentStatus status);
-    boolean existsByIncidentAndHelperUser(Incident incident, User helperUser);
+
+
+    boolean existsByPetAndStatus(Pet pet, IncidentStatus incidentStatus);
 }
 

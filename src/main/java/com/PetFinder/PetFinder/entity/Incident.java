@@ -29,10 +29,12 @@ public class Incident {
     private Point lastKnownLocation;
     @Column(name = "started_at")
     private LocalDateTime startedAt;
-    @OneToMany(mappedBy = "incidents")
+    @OneToMany(mappedBy = "incident")
     private List<IncidentMessage> messages;
     @OneToMany(mappedBy = "incident")
     private List<IncidentResponse> responses;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_id", nullable = false)
     private Pet pet;
 
 

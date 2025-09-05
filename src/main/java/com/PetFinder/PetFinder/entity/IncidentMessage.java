@@ -17,7 +17,7 @@ public class IncidentMessage {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "incident_id")
-    private Incident incidents;
+    private Incident incident;
     @ManyToOne
     @JoinColumn(name = "sender_user_id")
     private User sender;

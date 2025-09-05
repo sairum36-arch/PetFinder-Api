@@ -27,6 +27,7 @@ public class Collar {
     private Byte batteryLevel;
     @OneToMany(mappedBy = "collar")
     private List<LocationHistory> locationHistory;
+    @Column(name = "last_location", columnDefinition = "geography(Point, 4326)")
     private Point lastLocation;
 
 
