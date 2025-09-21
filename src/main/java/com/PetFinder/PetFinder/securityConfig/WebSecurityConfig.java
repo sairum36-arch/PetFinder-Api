@@ -26,19 +26,6 @@ public class WebSecurityConfig {
     private final JwtFilter filter;
     private final CredentialRepository credentialRepository;
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> credentialRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с email: " + username + " не найден"));
-    }
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -53,4 +40,5 @@ public class WebSecurityConfig {
                 .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 }

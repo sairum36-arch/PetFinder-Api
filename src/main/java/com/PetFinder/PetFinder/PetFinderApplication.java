@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ComponentScan(basePackages = "com.PetFinder.PetFinder")
 @SpringBootApplication
+@ConfigurationPropertiesScan
 public class PetFinderApplication {
 
 	public static void main(String[] args) {
