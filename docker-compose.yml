@@ -1,5 +1,4 @@
 services:
-  # --- СЕРВИС №1: БАЗА ДАННЫХ ---
   postgres-db:
     image: postgis/postgis:15-3.3-alpine
     container_name: petfinder-db
@@ -16,17 +15,12 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
-
-  # --- СЕРВИС №2: ВАШЕ SPRING-ПРИЛОЖЕНИЕ ---
   app:
     build: .
     container_name: petfinder-app
     ports:
       - "8080:8080"
       - "5005:5005"
-
-    # --- УБИРАЕМ environment ПОЛНОСТЬЮ ---
-
     command: [
       "java",
       "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005",
@@ -35,7 +29,6 @@ services:
       "--spring.datasource.username=postgres",
       "--spring.datasource.password=1"
     ]
-
     depends_on:
       postgres-db:
         condition: service_healthy

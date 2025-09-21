@@ -18,8 +18,8 @@
             <column name="breed_id" type="BIGINT"><constraints nullable="true"/></column>
             <column name="name" type="VARCHAR(255)"><constraints nullable="false"/></column>
             <column name="description" type="TEXT"/>
-            <column name="weight" type="BIGINT"/> <!-- ИСПРАВЛЕНО (был INT) -->
-            <column name="age" type="BIGINT"/> <!-- ИСПРАВЛЕНО (был INT) -->
+            <column name="weight" type="BIGINT"/>
+            <column name="age" type="BIGINT"/>
         </createTable>
 
         <createTable tableName="collars">
@@ -29,7 +29,7 @@
             <column name="status" type="VARCHAR(50)"><constraints nullable="false"/></column>
             <column name="battery_level" type="SMALLINT"/>
             <column name="last_seen_at" type="TIMESTAMP WITH TIME ZONE"/>
-            <column name="last_location" type="GEOGRAPHY(Point, 4326)"/> <!-- ДОБАВЛЕНО -->
+            <column name="last_location" type="GEOGRAPHY(Point, 4326)"/>
         </createTable>
 
         <createTable tableName="locations_history">

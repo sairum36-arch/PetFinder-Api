@@ -1,12 +1,10 @@
 package com.PetFinder.PetFinder.securityConfig;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@Data
 @ConfigurationProperties(prefix = "app.jwt")
-@Getter
-@Setter
 public class JwtProperties {
     private String secret;
     private long expirationMs;

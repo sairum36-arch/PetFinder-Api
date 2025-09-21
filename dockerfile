@@ -1,11 +1,11 @@
-# Шаг 1: Используем базовый образ с Java 21
-FROM openjdk:21-jdk-slim
-
-# Шаг 2: Устанавливаем рабочую директорию внутри будущего контейнера
+FROM eclipse-temurin:21-jdk-jammy AS builder
 WORKDIR /app
-
-# Шаг 3: Копируем ТОЛЬКО скомпилированный JAR-файл в контейнер
-COPY build/libs/*.jar app.jar
-
-# Шаг 4: Команда для запуска приложения при старте контейнера
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY gradlew .
+COPY gradle ./gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src ./src
+RUN ./gradlew build -x test
+FROM eclipse-temurin:21-jre-jammy
+WORKDIR /app
+COPY --from=builder /app/build/libs/*.jar app.jar

@@ -15,19 +15,25 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {PetMapper.class})
 public interface UserMapper {
-    @Mapping(target = "pets", ignore = true)
-    @Mapping(target = "activeCollarsCount", expression = "java(user.getPets().size())")
-    UserProfileResponse toBaseProfileDto(User user);
-    default UserProfileResponse toFullProfile(User user, PetService petService){
-        UserProfileResponse dto = toBaseProfileDto(user);
-        List<PetWithCollarsStatus> petDto = petService.getPetsForUserProfile(user);
-        dto.setPets(petDto);
-        return dto;
-    }
     @Mapping(source = "user.id", target = "userId")
     @Mapping(source = "user.fullName", target = "fullName")
+    @Mapping(source = "user.credential.email", target = "email")
     @Mapping(source = "token", target = "token")
     AuthResponse toAuthResponse(User user, String token);
-    User toEntity(UserProfileResponse userProfileResponse);
-
+    @Mapping(target = "pets", ignore = true)
+    @Mapping(target = "email", source = "user.credential.email")
+    @Mapping(target = "activeCollarsCount", expression = "java(user.getPets() != null ? user.getPets().size() : 0)")
+    UserProfileResponse toBaseProfileDto(User user);
+    default UserProfileResponse toFullProfile(User user, PetService petService) {
+        if (user == null) {
+            return null;
+        }
+        UserProfileResponse dto = toBaseProfileDto(user);
+        List<PetWithCollarsStatus> petDtos = petService.getPetsForUserProfile(user);
+        dto.setPets(petDtos);
+        if (dto.getEmail() == null && user.getCredential() != null) {
+            dto.setEmail(user.getCredential().getEmail());
+        }
+        return dto;
+    }
 }

@@ -19,8 +19,6 @@ public interface PetMapper {
     @Mapping(target = "petMainPhotoUrl", ignore = true)
     PetDetailResponse toDtoDetail(Pet pet);
     List<PetWithCollarsStatus> toDtoList(List<Pet> pets);
-
-
     @Mapping(target = "breed", ignore = true)
     @Mapping(target = "collar", ignore = true)
     @Mapping(target = "geoFences", ignore = true)

@@ -9,18 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@ConfigurationPropertiesScan
+@ComponentScan(basePackages = "com.PetFinder.PetFinder")
 @SpringBootApplication
-@ComponentScan(basePackages = {
-		"com.PetFinder.PetFinder.controllers",
-		"com.PetFinder.PetFinder.service",
-		"com.PetFinder.PetFinder.repositories",
-		"com.PetFinder.PetFinder.mapper",
-		"com.PetFinder.PetFinder.securityConfig",
-		"com.PetFinder.PetFinder.config",
-		"com.PetFinder.PetFinder.exception",
-		"com.PetFinder.PetFinder.advice"
-})
 public class PetFinderApplication {
 
 	public static void main(String[] args) {
