@@ -24,12 +24,15 @@ public interface PetMapper {
     @Mapping(target = "geoFences", ignore = true)
     @Mapping(target = "mediaFiles", ignore = true)
     Pet toPetBase(PetCreateRequest dto);
+
+    //todo ???
     default Pet toPetFull(PetCreateRequest dto, User owner, Breed breed){
         Pet newPet = toPetBase(dto);
         newPet.setUser(owner);
         newPet.setBreed(breed);
         return newPet;
     }
+
     default void updatePetFromDto(PetUpdateRequest dto, @MappingTarget Pet pet) {
         if (dto == null) {
             return;

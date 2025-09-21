@@ -17,8 +17,11 @@ public interface IncidentMapper {
     @Mapping(source = "pet", target = "petInfo")
     @Mapping(source = "pet.user", target = "ownerInfo")
     IncidentDetailResponse toDetailResponse(Incident incident);
+
     @Mapping(target = "pet", ignore = true)
     Incident toIncidentBase(IncidentCreateRequest dto);
+
+    //todo remove
     default Incident toIncidentFull(IncidentCreateRequest dto, Pet pet){
         Incident newIncident = toIncidentBase(dto);
         newIncident.setPet(pet);
@@ -27,6 +30,8 @@ public interface IncidentMapper {
         newIncident.setLastKnownLocation(pet.getCollar().getLastLocation());
         return newIncident;
     }
+
+    //todo ???
     @Mapping(source = "pet", target = "pet")
     IncidentBriefResponse toBriefResponse(Incident incident);
     List<IncidentBriefResponse> toBriefResponseList(List<Incident> incidents);

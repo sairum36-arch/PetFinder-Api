@@ -10,4 +10,6 @@ public class GeofenceCreateRequest {
     private String name;
     private Long petId;
     private List<CoordinateDto> points;
+
+    //todo coordinate dto as static class подумать
 }

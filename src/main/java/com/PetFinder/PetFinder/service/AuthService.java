@@ -35,14 +35,18 @@ public class AuthService {
     private final UserDetailsService userDetailsService;
     private final JwtTokenProvider tokenProvider;
     private final UserMapper userMapper;
+
     @Transactional
+            //todo какие виды чтения read uncommited, read commited and others
     public void register(UserRegistrationRequest request) {
+        //todo native sql existByEmail Sql(native=true)
         if (credentialRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Пользователь с таким email уже существует");
         }
         User user = userRegistrationMapper.toUser(request, passwordEncoder);
         userRepository.save(user);
     }
+
     public AuthResponse login(LoginRequest request) throws Exception {
         try {
             authenticationManager.authenticate(
@@ -51,6 +55,7 @@ public class AuthService {
         } catch (BadCredentialsException e) {
             throw new Exception("Неверный email или пароль", e);
         }
+        //todo
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String token = tokenProvider.generateToken(userDetails);
         User user = userRepository.findByCredentialEmail(request.getEmail())

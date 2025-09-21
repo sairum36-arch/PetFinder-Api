@@ -23,10 +23,12 @@ import com.PetFinder.PetFinder.service.AuthService;
 @RequestMapping("/api/auth")
 public class AuthController {
     private final AuthService authService;
+
     @PostMapping("/register")
     public void registerUser(@RequestBody UserRegistrationRequest request) {
         authService.register(request);
     }
+
     @PostMapping("/login")
     public AuthResponse loginUser(@RequestBody LoginRequest request) throws Exception {
         return authService.login(request);

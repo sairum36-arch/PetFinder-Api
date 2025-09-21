@@ -8,5 +8,7 @@ import java.util.Optional;
 
 public interface CollarRepository extends JpaRepository<Collar, Long> {
     Optional<Collar> findByDeviceId(String deviceId);
+
+    //todo jpql
     Optional<Collar> findByDeviceIdAndPet_Id(String deviceId, Long petId);
 }

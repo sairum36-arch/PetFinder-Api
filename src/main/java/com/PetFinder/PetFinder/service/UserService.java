@@ -18,6 +18,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PetService petService;
+    
     public UserProfileResponse getMyProfile(String email) {
         User user = userRepository.findByCredentialEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("Пользователь с email: " + email + " не найден"));

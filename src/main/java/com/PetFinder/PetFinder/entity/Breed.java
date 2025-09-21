@@ -12,6 +12,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "breeds")
 public class Breed {
+    //todo почитай в чем разница sequence vs dto
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

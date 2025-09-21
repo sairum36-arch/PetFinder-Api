@@ -29,6 +29,7 @@ public interface UserMapper {
             return null;
         }
         UserProfileResponse dto = toBaseProfileDto(user);
+        //todo don't use service in mapper
         List<PetWithCollarsStatus> petDtos = petService.getPetsForUserProfile(user);
         dto.setPets(petDtos);
         if (dto.getEmail() == null && user.getCredential() != null) {

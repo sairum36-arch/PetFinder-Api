@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            //todo 2 запроса на loadUserByusername, подумай, как сделать 1
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             if (tokenProvider.isTokenValid(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

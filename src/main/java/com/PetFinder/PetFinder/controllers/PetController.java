@@ -18,10 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PetController {
     private final PetService petService;
+
     @GetMapping("/my")
     public List<PetWithCollarsStatus> getAllPets(@AuthenticationPrincipal UserDetails currentUser){
         return petService.getAllPetsForCurrentUser(currentUser);
     }
+
+    //todo убрать урлу
     @PostMapping("/create")
     public void createPet(@RequestBody PetCreateRequest dto, @AuthenticationPrincipal UserDetails currentUser) {
         petService.createPet(dto, currentUser);
@@ -34,6 +37,7 @@ public class PetController {
     public void deletePet(@PathVariable Long petId, @AuthenticationPrincipal UserDetails currentUser) {
         petService.deletePet(petId, currentUser);
     }
+
     @PutMapping("/{petId}")
     public PetDetailResponse updatePet(
             @PathVariable Long petId,

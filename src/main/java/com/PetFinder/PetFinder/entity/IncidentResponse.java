@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "incident_responses")
+//todo название сущности не отражает суть
 public class IncidentResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

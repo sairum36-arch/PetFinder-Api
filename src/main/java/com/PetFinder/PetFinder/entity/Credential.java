@@ -27,6 +27,7 @@ public class Credential implements UserDetails {
     @JoinColumn(name= "user_id")
     private User user;
     private String password;
+    //todo unique and handle
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -38,10 +39,7 @@ public class Credential implements UserDetails {
     public String getUsername() {
         return this.email;
     }
-    @Override
-    public String getPassword() {
-        return this.password;
-    }
+
     @Override
     public boolean isAccountNonExpired() {
         return true;
