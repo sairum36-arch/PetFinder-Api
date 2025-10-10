@@ -4,10 +4,12 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <include file="v-1/01-create-user-table.xml" relativeToChangelogFile="true"/>
-    <include file="v-1/02-create-pets-table.xml" relativeToChangelogFile="true"/>
-    <include file="v-1/03-create-incidents-tables.xml" relativeToChangelogFile="true"/>
-    <include file="v-1/04-insert-initial-data.xml" relativeToChangelogFile="true"/>
-    <include file="v-1/05-insert-test-pets-data.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/01-create-base-schema.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/02-create-pets-schema.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/03-create-incidents-schema.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/04-insert-users.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/05-insert-pets.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/06-insert-test-data.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/07-add-avatar-to-user.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

@@ -46,7 +46,7 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	implementation 'org.liquibase:liquibase-core'
 	testImplementation 'org.testcontainers:junit-jupiter'
-
+	implementation 'io.minio:minio:8.5.2'
 }
 
 tasks.named('test') {

@@ -1,6 +1,7 @@
 package com.PetFinder.PetFinder.securityConfig;
 
-import com.PetFinder.PetFinder.repositories.CredentialRepository;
+import com.PetFinder.PetFinder.entity.UserEntity;
+import com.PetFinder.PetFinder.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,11 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final CredentialRepository credentialRepository;
+    private final UserRepository userRepository;
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> credentialRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Пользователь с email: " + username + " не найден"));
+        return username -> {
+            UserEntity user = userRepository.findUserDetailsByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("Пользователь с email: " + username + " не найден"));
+            return user.getCredentialEntity();
+        };
     }
     @Bean
     public AuthenticationProvider authenticationProvider() {

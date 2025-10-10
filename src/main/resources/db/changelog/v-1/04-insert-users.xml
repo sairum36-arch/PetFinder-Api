@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="4-insert-users" author="Nikita">
+        <insert tableName="users">
+            <column name="name" value="Admin User"/>
+            <column name="phone_number" value="+79990000001"/>
+        </insert>
+        <insert tableName="credentials">
+            <column name="user_id" valueComputed="currval('users_id_seq')"/>
+            <column name="email" value="admin@petfinder.com"/>
+            <column name="password" value="$2a$10$wKFXs3a.E5.X1wIe.j.dG./M0Gj8cPBMANv0XIXiXm6mZ.dG.u.ua"/>
+            <column name="role" value="ADMIN"/>
+        </insert>
+        <insert tableName="users">
+            <column name="name" value="NikitaT"/>
+            <column name="phone_number" value="+79990000002"/>
+        </insert>
+        <insert tableName="credentials">
+            <column name="user_id" valueComputed="currval('users_id_seq')"/>
+            <column name="email" value="nikita.test@example.com"/>
+            <column name="password" value="$2a$10$oLcX5V9GjKVZ5nujkfBP6.OAd3S7l7MljffVi.1GB7/H6/Fzm4RKG"/>
+            <column name="role" value="USER"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>

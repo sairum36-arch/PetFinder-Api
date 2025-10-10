@@ -1,101 +1,143 @@
 package com.PetFinder.PetFinder.service;
 
-import com.PetFinder.PetFinder.dto.mainProfileDTOS.PetWithCollarsStatus;
-import com.PetFinder.PetFinder.dto.petDTOS.PetCreateRequest;
-import com.PetFinder.PetFinder.dto.petDTOS.PetDetailResponse;
-import com.PetFinder.PetFinder.dto.petDTOS.PetUpdateRequest;
-import com.PetFinder.PetFinder.entity.Breed;
-import com.PetFinder.PetFinder.entity.Pet;
-import com.PetFinder.PetFinder.entity.User;
+import com.PetFinder.PetFinder.dto.mainProfile.PetWithCollarsStatus;
+import com.PetFinder.PetFinder.dto.pet.PetCreateRequest;
+import com.PetFinder.PetFinder.dto.pet.PetDetailResponse;
+import com.PetFinder.PetFinder.dto.pet.PetUpdateRequest;
+import com.PetFinder.PetFinder.entity.*;
 import com.PetFinder.PetFinder.exception.EntityNotFoundException;
 import com.PetFinder.PetFinder.mapper.PetMapper;
 import com.PetFinder.PetFinder.repositories.BreedRepository;
+import com.PetFinder.PetFinder.repositories.PetMediaRepository;
 import com.PetFinder.PetFinder.repositories.PetRepository;
 import com.PetFinder.PetFinder.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class PetService {
     private final PetRepository petRepository;
     private final PetMapper petMapper;
-    private final UserRepository userRepository;
     private final BreedRepository breedRepository;
+    private final PetMediaRepository petMediaRepository;
+    private static final Logger log = LoggerFactory.getLogger(PetService.class);
+    private final FileStorageService fileStorageService;
 
-    public PetWithCollarsStatus createPet(PetCreateRequest dto, UserDetails currentUser) {
-        User owner = findUserByDetails(currentUser);
-
-        //todo save pet only with breedId, breed isn't necessary
-        Breed breed = breedRepository.findById(dto.getBreedId())
-                .orElseThrow(() -> new EntityNotFoundException("Порода с таким id не найдена"));
-
-
-        Pet newPet = petMapper.toPetFull(dto, owner, breed);
-        return petMapper.toDto(petRepository.save(newPet));
-    }
-
-    //todo strange thing
-    public List<PetWithCollarsStatus> getPetsForUserProfile(User user) {
-        //List<Pet> petList = new ArrayList<>(user.getPets());
-        return petMapper.toDtoList(user.getPets());
-    }
-
-    public PetDetailResponse getPetDetails(Long petId, UserDetails currentUser) {
-        //todo don't ask User, put userId into UserDetails
-        User owner = findUserByDetails(currentUser);
-
-        Pet userPet = petRepository.findById(petId)
-                .orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
-        if (userPet.getUser().getId().equals(owner.getId())) {
-            return petMapper.toDtoDetail(userPet);
-        } else {
-            throw new AccessDeniedException("Учетные записи не совпадают");
+    @Transactional
+    public PetDetailResponse createPet(PetCreateRequest dto, CredentialEntity currentUser) {
+        UserEntity owner = currentUser.getUserEntity();
+        PetEntity newPetEntity = petMapper.toPetBase(dto);
+        newPetEntity.setUserEntity(owner);
+        if (dto.getBreedId() != null) {
+            newPetEntity.setBreedEntity(breedRepository.getReferenceById(dto.getBreedId()));
         }
-    }
-    public void deletePet(Long petId, UserDetails currentUser) {
-        //todo don't ask User, put userId into UserDetails
-        User owner = findUserByDetails(currentUser);
-
-        Pet userPet = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
-        if (userPet.getUser().getId().equals(owner.getId())) {
-            petRepository.deleteById(petId);
-        } else {
-            throw new AccessDeniedException("Не совпадают учетные записи");
+        PetEntity savedPet = petRepository.save(newPetEntity);
+        if (StringUtils.hasText(dto.getMainPhotoKey())) {
+            PetMediaEntity mainPhoto = new PetMediaEntity();
+            mainPhoto.setPetEntity(savedPet);
+            mainPhoto.setUrl(dto.getMainPhotoKey());
+            mainPhoto.setMainPhoto(true);
+            petMediaRepository.save(mainPhoto);
+            if (savedPet.getMediaFiles() == null) {
+                savedPet.setMediaFiles(new java.util.ArrayList<>());
+            }
+            savedPet.getMediaFiles().add(mainPhoto);
         }
-    }
-    public PetDetailResponse updatePet(Long petId, UserDetails currentUser, PetUpdateRequest dto) {
-        User owner = findUserByDetails(currentUser);
-
-        Pet updatePet = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
-        if (updatePet.getUser().getId().equals(owner.getId())) {
-
-            petMapper.updatePetFromDto(dto, updatePet);
-            Pet savedPet = petRepository.save(updatePet);
-
-            return petMapper.toDtoDetail(savedPet);
-        } else {
-            throw new AccessDeniedException("Не совпадают учетные записи");
-        }
-    }
-    private User findUserByDetails(UserDetails userDetails) {
-        String email = userDetails.getUsername();
-        return userRepository.findByCredentialEmail(email).orElseThrow(() -> new EntityNotFoundException("Пользователь с email: " + email + " не найден."));
+        return enrichPetDetailResponse(petMapper.toDtoDetail(savedPet), savedPet);
     }
 
     @Transactional(readOnly = true)
-    public List<PetWithCollarsStatus> getAllPetsForCurrentUser(UserDetails currentUser) {
-        //todo включи debug для sql логов сделай точку останова здесь
-        User owner = findUserByDetails(currentUser);
-        List list = owner.getPets();
-        //todo и здесь, посмотри, выполеняется ли лишний запрос на прогрузку lazy, почитай про проблему hibernate n+1
-        return petMapper.toDtoList(list);
+    public PetDetailResponse getPetDetails(Long petId, CredentialEntity currentUser) {
+        PetEntity userPetEntity = petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
+        if (!userPetEntity.getUserEntity().getId().equals(currentUser.getUserId())) {
+            throw new AccessDeniedException("Учетные записи не совпадают");
+        }
+        PetDetailResponse responseDto = petMapper.toDtoDetail(userPetEntity);
+        return enrichPetDetailResponse(responseDto, userPetEntity);
     }
 
+    @Transactional
+    public void deletePet(Long petId, CredentialEntity currentUser) {
+        Long currentUserId = currentUser.getUserId();
+        PetEntity petToDelete = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
+        if (petToDelete.getUserEntity().getId().equals(currentUserId)) {
+            petRepository.delete(petToDelete);
+        } else {
+            throw new AccessDeniedException("Не совпадают учетные записи");
+        }
+    }
+
+    @Transactional
+    public PetDetailResponse updatePet(Long petId, CredentialEntity currentUser, PetUpdateRequest dto) {
+        PetEntity petToUpdate = petRepository.findPetWithMediaById(petId)
+                .orElseThrow(() -> new EntityNotFoundException("Питомец с ID " + petId + " не найден."));
+        if (!petToUpdate.getUserEntity().getId().equals(currentUser.getUserId())) {
+            throw new AccessDeniedException("У вас нет прав для редактирования этого питомца.");
+        }
+        petMapper.updatePetFromDto(dto, petToUpdate);
+        if (StringUtils.hasText(dto.getMainPhotoKey())) {
+            Optional<PetMediaEntity> oldMainPhotoOpt = petMediaRepository.findMainPhotoForPet(petToUpdate, true);
+
+            if (oldMainPhotoOpt.isPresent()) {
+                oldMainPhotoOpt.get().setUrl(dto.getMainPhotoKey());
+            } else {
+                PetMediaEntity newMainPhoto = new PetMediaEntity();
+                newMainPhoto.setPetEntity(petToUpdate);
+                newMainPhoto.setUrl(dto.getMainPhotoKey());
+                newMainPhoto.setMainPhoto(true);
+                petMediaRepository.save(newMainPhoto);
+                petToUpdate.getMediaFiles().add(newMainPhoto);
+            }
+        }
+        PetDetailResponse responseDto = petMapper.toDtoDetail(petToUpdate);
+        return enrichPetDetailResponse(responseDto, petToUpdate);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PetWithCollarsStatus> getAllPetsForCurrentUser(CredentialEntity currentUser) {
+        UserEntity owner = currentUser.getUserEntity();
+        List<PetWithCollarsStatus> dtoList = petMapper.toDtoList(owner.getPetEntities());
+        dtoList.forEach(dto -> {
+            PetEntity correspondingEntity = owner.getPetEntities().stream()
+                    .filter(entity -> entity.getId().equals(dto.getPetId()))
+                    .findFirst().orElse(null);
+
+            if (correspondingEntity != null) {
+                enrichPetStatusResponse(dto, correspondingEntity);
+            }
+        });
+
+        return dtoList;
+    }
+
+    public PetDetailResponse enrichPetDetailResponse(PetDetailResponse dto, PetEntity entity) {
+        getPhotoUrlFromEntity(entity).ifPresent(dto::setPetMainPhotoUrl);
+        return dto;
+    }
+
+    public PetWithCollarsStatus enrichPetStatusResponse(PetWithCollarsStatus dto, PetEntity entity) {
+        getPhotoUrlFromEntity(entity).ifPresent(dto::setPetMainPhotoUrl);
+        return dto;
+    }
+
+    private Optional<String> getPhotoUrlFromEntity(PetEntity entity) {
+        if (entity.getMediaFiles() == null || entity.getMediaFiles().isEmpty()) {
+            return Optional.empty();
+        }
+        return entity.getMediaFiles().stream()
+                .filter(PetMediaEntity::isMainPhoto)
+                .findFirst()
+                .map(media -> fileStorageService.getObjectUrl(media.getUrl()));
+    }
 }

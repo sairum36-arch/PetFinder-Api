@@ -1,54 +1,64 @@
 package com.PetFinder.PetFinder.mapper;
 
-import com.PetFinder.PetFinder.dto.mainProfileDTOS.PetWithCollarsStatus;
-import com.PetFinder.PetFinder.dto.petDTOS.PetCreateRequest;
-import com.PetFinder.PetFinder.dto.petDTOS.PetDetailResponse;
-import com.PetFinder.PetFinder.dto.petDTOS.PetUpdateRequest;
-import com.PetFinder.PetFinder.entity.Breed;
-import com.PetFinder.PetFinder.entity.Pet;
-import com.PetFinder.PetFinder.entity.User;
+import com.PetFinder.PetFinder.dto.CoordinateDto;
+import com.PetFinder.PetFinder.dto.mainProfile.PetWithCollarsStatus;
+import com.PetFinder.PetFinder.dto.pet.PetCreateRequest;
+import com.PetFinder.PetFinder.dto.pet.PetDetailResponse;
+import com.PetFinder.PetFinder.dto.pet.PetUpdateRequest;
+import com.PetFinder.PetFinder.entity.PetEntity;
+import org.locationtech.jts.geom.Point;
 import org.mapstruct.*;
+
 
 import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class, BreedMapper.class, CollarMapper.class})
 public interface PetMapper {
-    Pet toEntity(PetWithCollarsStatus petInfo);
-    @Mapping(target = "petMainPhotoUrl", ignore= true)
-    PetWithCollarsStatus toDto(Pet pet);
-    @Mapping(target = "petMainPhotoUrl", ignore = true)
-    PetDetailResponse toDtoDetail(Pet pet);
-    List<PetWithCollarsStatus> toDtoList(List<Pet> pets);
-    @Mapping(target = "breed", ignore = true)
-    @Mapping(target = "collar", ignore = true)
-    @Mapping(target = "geoFences", ignore = true)
-    @Mapping(target = "mediaFiles", ignore = true)
-    Pet toPetBase(PetCreateRequest dto);
+    PetEntity toEntity(PetWithCollarsStatus petInfo);
+    @Mapping(source = "id", target = "petId")
+    @Mapping(source = "name", target = "petName")
+    @Mapping(source = "collarEntity.id", target = "collarId")
+    @Mapping(source = "collarEntity.status", target = "collarStatus")
+    @Mapping(source = "collarEntity.batteryLevel", target = "batteryLevel")
+    @Mapping(source = "collarEntity.lastLocation", target = "lastKnownLocation")
+    PetWithCollarsStatus toDto(PetEntity petEntity);
 
-    //todo ???
-    default Pet toPetFull(PetCreateRequest dto, User owner, Breed breed){
-        Pet newPet = toPetBase(dto);
-        newPet.setUser(owner);
-        newPet.setBreed(breed);
-        return newPet;
+    PetDetailResponse toDtoDetail(PetEntity petEntity);
+
+    List<PetWithCollarsStatus> toDtoList(List<PetEntity> petEntities);
+
+    @Mapping(target = "breedEntity", ignore = true)
+    @Mapping(target = "collarEntity", ignore = true)
+    @Mapping(target = "geoFenceEntities", ignore = true)
+    @Mapping(target = "mediaFiles", ignore = true)
+    PetEntity toPetBase(PetCreateRequest dto);
+    default CoordinateDto pointToCoordinateDto(Point point){
+        if(point == null){
+            return null;
+        }
+        CoordinateDto coordinateDto = new CoordinateDto();
+        coordinateDto.setLongitude(point.getX());
+        coordinateDto.setLatitude(point.getY());
+        return coordinateDto;
     }
 
-    default void updatePetFromDto(PetUpdateRequest dto, @MappingTarget Pet pet) {
+    default void updatePetFromDto(PetUpdateRequest dto, @MappingTarget PetEntity petEntity) {
         if (dto == null) {
             return;
         }
         if (dto.getName() != null) {
-            pet.setName(dto.getName());
+            petEntity.setName(dto.getName());
         }
         if (dto.getDescription() != null) {
-            pet.setDescription(dto.getDescription());
+            petEntity.setDescription(dto.getDescription());
         }
         if (dto.getWeight() != null) {
-            pet.setWeight(dto.getWeight());
+            petEntity.setWeight(dto.getWeight());
         }
         if (dto.getAge() != null) {
-            pet.setAge(dto.getAge());
+            petEntity.setAge(dto.getAge());
         }
     }
+
 
 }

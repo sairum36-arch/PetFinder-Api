@@ -1,13 +1,16 @@
 package com.PetFinder.PetFinder.repositories;
 
-import com.PetFinder.PetFinder.entity.Collar;
-import com.PetFinder.PetFinder.entity.LocationHistory;
+import com.PetFinder.PetFinder.entity.CollarEntity;
+import com.PetFinder.PetFinder.entity.LocationHistoryEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface LocationHistoryRepository  extends JpaRepository<LocationHistory, Long> {
-    List<LocationHistory> findByCollarAndTimestampBetweenOrderByTimestampAsc(Collar collar, LocalDateTime start, LocalDateTime end);
+public interface LocationHistoryRepository  extends JpaRepository<LocationHistoryEntity, Long> {
+    @Query("SELECT lh FROM LocationHistoryEntity lh " + "WHERE lh.collarEntity = :collar " + "AND lh.timestamp BETWEEN :start AND :end " + "ORDER BY lh.timestamp ASC")
+    List<LocationHistoryEntity> findHistoryForPeriod(@Param("collar") CollarEntity collarEntity,@Param("start") LocalDateTime start,@Param("end") LocalDateTime end);
 
 }

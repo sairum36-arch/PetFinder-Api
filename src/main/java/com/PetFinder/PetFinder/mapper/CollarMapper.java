@@ -1,10 +1,10 @@
 package com.PetFinder.PetFinder.mapper;
 
-import com.PetFinder.PetFinder.dto.CollarDto;
-import com.PetFinder.PetFinder.entity.Collar;
+import com.PetFinder.PetFinder.dto.Collar;
+import com.PetFinder.PetFinder.entity.CollarEntity;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface CollarMapper {
-    CollarDto toDto(Collar collar);
+    Collar toDto(CollarEntity collarEntity);
 }

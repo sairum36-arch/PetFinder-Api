@@ -1,0 +1,13 @@
+package com.PetFinder.PetFinder;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class PetEntityFinderApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

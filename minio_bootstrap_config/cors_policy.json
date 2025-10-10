@@ -1,0 +1,9 @@
+{
+  "CORSConfiguration": [
+    {
+      "AllowedOrigins": ["http://localhost:4200"],
+      "AllowedMethods": ["GET"],
+      "AllowedHeaders": ["*"]
+    }
+  ]
+}

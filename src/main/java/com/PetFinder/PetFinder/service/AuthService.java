@@ -5,16 +5,18 @@ import com.PetFinder.PetFinder.dto.auth.LoginRequest;
 import com.PetFinder.PetFinder.dto.auth.UserRegistrationRequest;
 
 
-import com.PetFinder.PetFinder.entity.User;
+import com.PetFinder.PetFinder.entity.CredentialEntity;
+import com.PetFinder.PetFinder.entity.UserEntity;
 import com.PetFinder.PetFinder.exception.EmailAlreadyExistsException;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import com.PetFinder.PetFinder.mapper.UserMapper;
 import com.PetFinder.PetFinder.mapper.UserRegistrationMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 import com.PetFinder.PetFinder.repositories.CredentialRepository;
 import com.PetFinder.PetFinder.repositories.UserRepository;
 import com.PetFinder.PetFinder.securityConfig.JwtTokenProvider;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -36,30 +40,28 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UserMapper userMapper;
 
-    @Transactional
+    @Transactional(isolation = Isolation.READ_COMMITTED)
             //todo какие виды чтения read uncommited, read commited and others
     public void register(UserRegistrationRequest request) {
-        //todo native sql existByEmail Sql(native=true)
         if (credentialRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Пользователь с таким email уже существует");
         }
-        User user = userRegistrationMapper.toUser(request, passwordEncoder);
-        userRepository.save(user);
+        UserEntity userEntity = userRegistrationMapper.toUser(request, passwordEncoder);
+        userRepository.save(userEntity);
     }
 
     public AuthResponse login(LoginRequest request) throws Exception {
+        Authentication authentication;
         try {
-            authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (BadCredentialsException e) {
             throw new Exception("Неверный email или пароль", e);
         }
-        //todo
-        final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-        final String token = tokenProvider.generateToken(userDetails);
-        User user = userRepository.findByCredentialEmail(request.getEmail())
-                .orElseThrow(() -> new IllegalStateException("Пользователь не найден после успешной аутентификации. Это аномалия."));
-        return userMapper.toAuthResponse(user, token);
+        CredentialEntity credential = (CredentialEntity) authentication.getPrincipal();
+        UserEntity userEntity = credential.getUserEntity();
+        final String token = tokenProvider.generateToken(credential);
+        return userMapper.toAuthResponse(userEntity, token);
     }
 }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="6-insert-location-history" author="NikitaTest">
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1800 51.6960)"/>
+            <column name="timestamp" value="2025-10-07T12:00:00Z"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1825 51.6975)"/>
+            <column name="timestamp" value="2025-10-07T12:01:00Z"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1850 51.6955)"/>
+            <column name="timestamp" value="2025-10-07T12:02:00Z"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1830 51.6940)"/>
+            <column name="timestamp" value="2025-10-07T12:03:00Z"/>
+        </insert>
+    </changeSet>
+    <changeSet id="6-insert-active-incident" author="NikitaTest">
+        <insert tableName="incidents">
+            <column name="pet_id" valueNumeric="2"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="reward" valueNumeric="1000.00"/>
+            <column name="last_known_location" value="SRID=4326;POINT(39.2323 51.6616)"/>
+            <column name="started_at" value="2025-10-07T14:00:00Z"/>
+            <column name="owners_notes" value="Очень пугливый, может не подходить к чужим. Пожалуйста, сразу звоните!"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+

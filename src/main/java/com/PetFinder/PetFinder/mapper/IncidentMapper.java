@@ -1,11 +1,11 @@
 package com.PetFinder.PetFinder.mapper;
 
-import com.PetFinder.PetFinder.dto.IncidentDTOS.IncidentBriefResponse;
-import com.PetFinder.PetFinder.dto.IncidentDTOS.IncidentCreateRequest;
-import com.PetFinder.PetFinder.dto.IncidentDTOS.IncidentDetailResponse;
-import com.PetFinder.PetFinder.entity.Incident;
+import com.PetFinder.PetFinder.dto.Incident.IncidentBriefResponse;
+import com.PetFinder.PetFinder.dto.Incident.IncidentCreateRequest;
+import com.PetFinder.PetFinder.dto.Incident.IncidentDetailResponse;
+import com.PetFinder.PetFinder.entity.IncidentEntity;
 import com.PetFinder.PetFinder.entity.IncidentStatus;
-import com.PetFinder.PetFinder.entity.Pet;
+import com.PetFinder.PetFinder.entity.PetEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -14,26 +14,15 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {PetMapper.class, UserMapper.class})
 public interface IncidentMapper {
-    @Mapping(source = "pet", target = "petInfo")
-    @Mapping(source = "pet.user", target = "ownerInfo")
-    IncidentDetailResponse toDetailResponse(Incident incident);
+    @Mapping(target = "ownersNotes", source = "ownerNotes")
+    IncidentEntity toEntity(IncidentCreateRequest dto);
 
-    @Mapping(target = "pet", ignore = true)
-    Incident toIncidentBase(IncidentCreateRequest dto);
+    @Mapping(source = "petEntity", target = "petInfo")
+    @Mapping(source = "petEntity.userEntity", target = "ownerInfo")
+    IncidentDetailResponse toDetailResponse(IncidentEntity entity);
 
-    //todo remove
-    default Incident toIncidentFull(IncidentCreateRequest dto, Pet pet){
-        Incident newIncident = toIncidentBase(dto);
-        newIncident.setPet(pet);
-        newIncident.setStatus(IncidentStatus.ACTIVE);
-        newIncident.setStartedAt(LocalDateTime.now());
-        newIncident.setLastKnownLocation(pet.getCollar().getLastLocation());
-        return newIncident;
-    }
-
-    //todo ???
-    @Mapping(source = "pet", target = "pet")
-    IncidentBriefResponse toBriefResponse(Incident incident);
-    List<IncidentBriefResponse> toBriefResponseList(List<Incident> incidents);
+    @Mapping(source = "petEntity", target = "pet")
+    @Mapping(target = "distanceToUserKm", ignore = true)
+    IncidentBriefResponse toBriefResponse(IncidentEntity entity);
 
 }
