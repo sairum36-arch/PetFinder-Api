@@ -8,4 +8,5 @@ public class PetBriefInfo {
     private String name;
     private String mainPhotoUrl;
     private String breedName;
+    private Long ownerId;
 }

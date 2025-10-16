@@ -1,9 +1,9 @@
-package com.PetFinder.PetFinder.dto.Incident;
+package com.PetFinder.PetFinder.dto.messages;
 
 import lombok.Data;
 
 @Data
-public class UserInfo {
+public class SenderInfo {
     private Long id;
     private String name;
     private String avatarUrl;

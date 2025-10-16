@@ -1,9 +1,6 @@
-package com.PetFinder.PetFinder.service;
+package com.PetFinder.PetFinder.service.FileStoragePackage;
 
-import com.PetFinder.PetFinder.config.MinioConfig;
-import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.PutObjectArgs;
-import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 
 
@@ -12,10 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import io.minio.MinioClient;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor

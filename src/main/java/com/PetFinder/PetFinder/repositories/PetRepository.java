@@ -18,4 +18,7 @@ public interface PetRepository extends JpaRepository<PetEntity, Long> {
             "LEFT JOIN FETCH p.collarEntity " +
             "WHERE p.id = :id")
     Optional<PetEntity> findPetWithMediaById(@Param("id") Long id);
+
+    @Query("SELECT p FROM PetEntity p LEFT JOIN FETCH p.mediaFiles WHERE p IN :pets")
+    List<PetEntity> findWithMedia(@Param("pets") List<PetEntity> pets);
 }

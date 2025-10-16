@@ -9,5 +9,5 @@ public class PetInfo {
     private String name;
     private String description;
     private Breed breed;
-    //TODO сделать с фото логику
+    private String mainPhotoUrl;
 }

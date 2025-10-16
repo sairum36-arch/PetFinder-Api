@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet id="8-insert-test-notifications" author="TvoyoImya">
+        <insert tableName="notifications">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="type" value="LOW_BATTERY"/>
+            <column name="message" value="Низкий заряд ошейника у питомца 'Барон'! Осталось 15%."/>
+            <column name="is_read" valueBoolean="false"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP"/>
+        </insert>
+        <insert tableName="notifications">
+            <column name="user_id" valueNumeric="2"/>
+            <column name="type" value="EXIT"/>
+            <column name="message" value="Питомец 'Рекс' покинул геозону 'Дом'."/>
+            <column name="is_read" valueBoolean="true"/>
+            <column name="created_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 day'"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
+

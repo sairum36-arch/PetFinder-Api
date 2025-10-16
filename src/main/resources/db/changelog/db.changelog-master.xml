@@ -11,5 +11,6 @@
     <include file="v-1/05-insert-pets.xml" relativeToChangelogFile="true"/>
     <include file="v-1/06-insert-test-data.xml" relativeToChangelogFile="true"/>
     <include file="v-1/07-add-avatar-to-user.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/08-insert-test-notifications.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

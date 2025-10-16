@@ -14,5 +14,5 @@ public class UserProfileResponse {
     private String avatarUrl;
     private int activeCollarsCount;
     private List<PetWithCollarsStatus> pets;
-
+    private int unreadNotificationsCount;
 }

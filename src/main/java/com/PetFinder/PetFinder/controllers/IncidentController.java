@@ -17,9 +17,9 @@ import java.util.List;
 public class IncidentController {
     private final IncidentService incidentService;
 
-    @PostMapping("/create")
-    public void createIncident(@RequestBody IncidentCreateRequest dto, @AuthenticationPrincipal CredentialEntity currentUser){
-        incidentService.createIncident(currentUser, dto);
+    @PostMapping
+    public IncidentBriefResponse createIncident(@RequestBody IncidentCreateRequest dto, @AuthenticationPrincipal CredentialEntity currentUser){
+       return incidentService.createIncident(currentUser, dto);
     }
 
     @GetMapping("/{incidentId}")
@@ -32,4 +32,13 @@ public class IncidentController {
         return incidentService.findAllActiveIncidents();
     }
 
+    @PostMapping("/{incidentId}/respond")
+    public void respondToIncident(@PathVariable Long incidentId, @AuthenticationPrincipal CredentialEntity currentUser){
+        incidentService.respondToIncident(incidentId, currentUser);
+    }
+
+    @PostMapping("/{incidentId}/close")
+    public void closeIncident(@PathVariable Long incidentId, @AuthenticationPrincipal CredentialEntity currentUser){
+        incidentService.closeIncidentByOwner(incidentId, currentUser);
+    }
 }
