@@ -2,15 +2,13 @@ package com.PetFinder.PetFinder.service;
 
 import com.PetFinder.PetFinder.dto.messages.MessageResponse;
 import com.PetFinder.PetFinder.dto.messages.MessageSendRequest;
-import com.PetFinder.PetFinder.entity.CredentialEntity;
-import com.PetFinder.PetFinder.entity.IncidentEntity;
-import com.PetFinder.PetFinder.entity.IncidentMessageEntity;
-import com.PetFinder.PetFinder.entity.UserEntity;
+import com.PetFinder.PetFinder.entity.*;
 import com.PetFinder.PetFinder.exception.EntityNotFoundException;
 import com.PetFinder.PetFinder.mapper.IncidentMessageMapper;
 import com.PetFinder.PetFinder.repositories.IncidentMessageRepository;
 import com.PetFinder.PetFinder.repositories.IncidentRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +22,7 @@ public class IncidentMessageService {
     private final IncidentRepository incidentRepository;
     private final IncidentMessageRepository messageRepository;
     private final IncidentMessageMapper messageMapper;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public MessageResponse sendMessage(Long incidentId, MessageSendRequest request, CredentialEntity currentUser) {
@@ -34,8 +33,12 @@ public class IncidentMessageService {
         message.setMessageText(request.getMessageText());
         message.setSentAt(LocalDateTime.now());
         IncidentMessageEntity savedMessage = messageRepository.save(message);
-        return messageMapper.toDto(savedMessage);
+        MessageResponse responseDto =  messageMapper.toDto(savedMessage);
+        String destination = "/topic/chat/" + incidentId;
+        messagingTemplate.convertAndSend(destination, responseDto);
+        return responseDto;
     }
+
     @Transactional(readOnly = true)
     public List<MessageResponse> getMessages(Long incidentId, CredentialEntity currentUser) {
         IncidentEntity incident = findIncidentAndCheckAccess(incidentId, currentUser.getUserEntity());
@@ -44,15 +47,12 @@ public class IncidentMessageService {
     }
 
     private IncidentEntity findIncidentAndCheckAccess(Long incidentId, UserEntity user) {
-        IncidentEntity incident = incidentRepository.findById(incidentId)
-                .orElseThrow(() -> new EntityNotFoundException("Инцидент с ID " + incidentId + " не найден."));
-        boolean isOwner = incident.getPetEntity().getUserEntity().getId().equals(user.getId());
-        boolean isHelper = incident.getResponses().stream()
-                .anyMatch(participation -> participation.getHelperUserEntity().getId().equals(user.getId()));
-        if (!isOwner && !isHelper) {
-            throw new AccessDeniedException("У вас нет доступа к этому чату.");
+        IncidentEntity incident = incidentRepository.findByIdWithDetails(incidentId).orElseThrow(() -> new EntityNotFoundException("Инцидент с ID " + incidentId + " не найден."));
+        if (incident.getStatus() != IncidentStatus.ACTIVE) {
+            throw new AccessDeniedException("Этот инцидент больше не активен.");
         }
 
+        boolean isOwner = incident.getPetEntity().getUserEntity().getId().equals(user.getId());
         return incident;
     }
 }

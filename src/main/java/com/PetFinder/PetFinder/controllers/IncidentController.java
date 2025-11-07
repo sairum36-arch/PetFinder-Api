@@ -28,8 +28,8 @@ public class IncidentController {
     }
 
     @GetMapping("/active")
-    public List<IncidentBriefResponse> findAllActiveIncidents(){
-        return incidentService.findAllActiveIncidents();
+    public List<IncidentBriefResponse> findAllActiveIncidents(@RequestParam(required = false) Double userLat, @RequestParam(required = false) Double userLon) {
+        return incidentService.findAllActiveIncidents(userLat, userLon);
     }
 
     @PostMapping("/{incidentId}/respond")
@@ -41,4 +41,14 @@ public class IncidentController {
     public void closeIncident(@PathVariable Long incidentId, @AuthenticationPrincipal CredentialEntity currentUser){
         incidentService.closeIncidentByOwner(incidentId, currentUser);
     }
+    @PostMapping("/{incidentId}/cancel")
+    public void cancelIncident(@PathVariable Long incidentId, @AuthenticationPrincipal CredentialEntity currentUser){
+        incidentService.cancelIncident(incidentId, currentUser);
+    }
+
+    @PostMapping("/{incidentId}/resolve-by-helper")
+    public void resolveIncidentByHelper(@PathVariable Long incidentId, @AuthenticationPrincipal CredentialEntity currentUser){
+        incidentService.resolveIncidentByHelper(incidentId, currentUser);
+    }
+
 }

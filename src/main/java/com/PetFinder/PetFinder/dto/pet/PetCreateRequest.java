@@ -10,4 +10,5 @@ public class PetCreateRequest {
     private Long weight;
     private String description;
     private String mainPhotoKey;
+    private String deviceId;
 }

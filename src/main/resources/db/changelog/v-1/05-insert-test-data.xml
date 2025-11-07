@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="5-insert-breeds" author="Nikita">
+        <insert tableName="breeds"><column name="name" value="Золотистый ретривер"/></insert>
+        <insert tableName="breeds"><column name="name" value="Немецкая овчарка"/></insert>
+        <insert tableName="breeds"><column name="name" value="Бигль"/></insert>
+    </changeSet>
+
+    <changeSet id="5-insert-pets-and-collars-updated" author="Nikita">
+
+        <insert tableName="pets">
+            <column name="id" valueNumeric="1"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="breed_id" valueNumeric="2"/>
+            <column name="name" value="Рекс"/>
+            <column name="description" value="Очень дружелюбный и активный пёс. Любит играть в мяч."/>
+            <column name="weight" valueNumeric="32"/>
+            <column name="age" valueNumeric="5"/>
+        </insert>
+        <insert tableName="collars">
+            <column name="id" valueNumeric="1"/>
+            <column name="pet_id" valueNumeric="1"/>
+            <column name="device_id" value="DEVICE-001-REX"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="battery_level" valueNumeric="85"/>
+            <column name="last_location" value="SRID=4326;POINT(39.208882 51.675496)"/>
+        </insert>
+
+        <insert tableName="pets">
+            <column name="id" valueNumeric="2"/>
+            <column name="user_id" valueNumeric="2"/>
+            <column name="breed_id" valueNumeric="1"/>
+            <column name="name" value="Барон"/>
+            <column name="description" value="Умный и верный защитник. Прошел курс дрессировки."/>
+            <column name="weight" valueNumeric="40"/>
+            <column name="age" valueNumeric="7"/>
+        </insert>
+        <insert tableName="collars">
+            <column name="id" valueNumeric="2"/>
+            <column name="pet_id" valueNumeric="2"/>
+            <column name="device_id" value="DEVICE-002-BARON"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="battery_level" valueNumeric="72"/>
+            <column name="last_location" value="SRID=4326;POINT(39.2323 51.6616)"/>
+        </insert>
+
+        <sql>
+            SELECT setval('pets_id_seq', (SELECT MAX(id) FROM pets));
+            SELECT setval('collars_id_seq', (SELECT MAX(id) FROM collars));
+        </sql>
+    </changeSet>
+
+    <changeSet id="5-insert-incident-and-history" author="Nikita">
+        <!-- Историю перемещений оставляем для Рекса (collar_id = 1) -->
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1800 51.6960)"/>
+            <column name="timestamp" value="2025-10-07T12:00:00Z"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1825 51.6975)"/>
+            <column name="timestamp" value="2025-10-07T12:01:00Z"/>
+        </insert>
+
+        <insert tableName="incidents">
+            <column name="pet_id" valueNumeric="2"/>
+            <column name="status" value="ACTIVE"/>
+            <column name="reward" valueNumeric="1000.00"/>
+            <column name="last_known_location" value="SRID=4326;POINT(39.2323 51.6616)"/>
+            <column name="started_at" value="2025-10-07T14:00:00Z"/>
+            <column name="owners_notes" value="Очень пугливый, может не подходить к чужим. Пожалуйста, сразу звоните!"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
+
+  

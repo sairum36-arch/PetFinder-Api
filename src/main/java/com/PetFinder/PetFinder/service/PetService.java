@@ -6,14 +6,12 @@ import com.PetFinder.PetFinder.dto.pet.PetDetailResponse;
 import com.PetFinder.PetFinder.dto.pet.PetUpdateRequest;
 import com.PetFinder.PetFinder.entity.*;
 import com.PetFinder.PetFinder.exception.EntityNotFoundException;
+import com.PetFinder.PetFinder.exception.ResourceConflictException;
 import com.PetFinder.PetFinder.mapper.PetMapper;
 import com.PetFinder.PetFinder.repositories.BreedRepository;
+import com.PetFinder.PetFinder.repositories.CollarRepository;
 import com.PetFinder.PetFinder.repositories.PetMediaRepository;
 import com.PetFinder.PetFinder.repositories.PetRepository;
-import com.PetFinder.PetFinder.service.FileStoragePackage.FileStorageService;
-import com.PetFinder.PetFinder.service.FileStoragePackage.UrlBuilderService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,8 +29,8 @@ public class PetService {
     private final PetMapper petMapper;
     private final BreedRepository breedRepository;
     private final PetMediaRepository petMediaRepository;
-    private static final Logger log = LoggerFactory.getLogger(PetService.class);
-    private final UrlBuilderService urlBuilderService;
+    private final CollarRepository collarRepository;
+
 
     @Transactional
     public PetDetailResponse createPet(PetCreateRequest dto, CredentialEntity currentUser){
@@ -45,6 +43,24 @@ public class PetService {
             newPetEntity.setBreedEntity(breed);
         }
         PetEntity savedPet = petRepository.save(newPetEntity);
+        if (StringUtils.hasText(dto.getDeviceId())) {
+            CollarEntity collar = collarRepository.findByDeviceId(dto.getDeviceId())
+                    .orElseGet(() -> {
+                        CollarEntity newCollar = new CollarEntity();
+                        newCollar.setDeviceId(dto.getDeviceId());
+                        newCollar.setStatus(CollarStatus.UNPAIRED);
+                        return newCollar;
+                    });
+
+            if (collar.getPetEntity() != null) {
+                throw new ResourceConflictException("Ошейник с ID " + dto.getDeviceId() + " уже используется.");
+            }
+            collar.setPetEntity(savedPet);
+            collar.setStatus(CollarStatus.ACTIVE);
+            collarRepository.save(collar);
+            savedPet.setCollarEntity(collar);
+        }
+
         if (StringUtils.hasText(dto.getMainPhotoKey())) {
             PetMediaEntity mainPhoto = new PetMediaEntity();
             mainPhoto.setPetEntity(savedPet);
@@ -61,7 +77,7 @@ public class PetService {
 
     @Transactional(readOnly = true)
     public PetDetailResponse getPetDetails(Long petId, CredentialEntity currentUser) {
-        PetEntity userPetEntity = petRepository.findById(petId)
+        PetEntity userPetEntity = petRepository.findPetDetailsById(petId)
                 .orElseThrow(() -> new EntityNotFoundException("Животное с таким id не найдено"));
         if (!userPetEntity.getUserEntity().getId().equals(currentUser.getUserId())) {
             throw new AccessDeniedException("Учетные записи не совпадают");
@@ -88,6 +104,34 @@ public class PetService {
             throw new AccessDeniedException("У вас нет прав для редактирования этого питомца.");
         }
         petMapper.updatePetFromDto(dto, petToUpdate);
+        CollarEntity currentCollar = petToUpdate.getCollarEntity();
+        String newDeviceId = dto.getDeviceId();
+
+        if ( currentCollar != null && !StringUtils.hasText(newDeviceId) ) {
+            currentCollar.setPetEntity(null);
+            currentCollar.setStatus(CollarStatus.UNPAIRED);
+            petToUpdate.setCollarEntity(null);
+        }
+        else if (StringUtils.hasText(newDeviceId)) {
+            if (currentCollar == null || !currentCollar.getDeviceId().equals(newDeviceId)) {
+                if (currentCollar != null) {
+                    currentCollar.setPetEntity(null);
+                    currentCollar.setStatus(CollarStatus.UNPAIRED);
+                }
+                CollarEntity newCollar = collarRepository.findByDeviceId(newDeviceId).orElseGet(() -> {
+                    CollarEntity c = new CollarEntity();
+                    c.setDeviceId(newDeviceId);
+                    c.setStatus(CollarStatus.UNPAIRED);
+                    return c;
+                });
+                if (newCollar.getPetEntity() != null) {
+                    throw new ResourceConflictException("Ошейник с ID " + newDeviceId + " уже используется.");
+                }
+                newCollar.setPetEntity(petToUpdate);
+                newCollar.setStatus(CollarStatus.ACTIVE);
+                petToUpdate.setCollarEntity(collarRepository.save(newCollar));
+            }
+        }
         if (StringUtils.hasText(dto.getMainPhotoKey())) {
             Optional<PetMediaEntity> oldMainPhotoOpt = petMediaRepository.findMainPhotoForPet(petToUpdate, true);
             if (oldMainPhotoOpt.isPresent()) {
@@ -109,4 +153,6 @@ public class PetService {
         UserEntity owner = currentUser.getUserEntity();
         return petMapper.toDtoList(owner.getPetEntities());
     }
+
+
 }

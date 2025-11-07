@@ -41,7 +41,6 @@ public class AuthService {
     private final UserMapper userMapper;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-            //todo какие виды чтения read uncommited, read commited and others
     public void register(UserRegistrationRequest request) {
         if (credentialRepository.existsByEmail(request.getEmail())) {
             throw new EmailAlreadyExistsException("Пользователь с таким email уже существует");

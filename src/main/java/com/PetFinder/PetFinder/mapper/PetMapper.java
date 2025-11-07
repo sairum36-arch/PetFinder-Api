@@ -25,6 +25,8 @@ public interface PetMapper {
     @Mapping(source = ".", target = "petMainPhotoUrl")
     PetWithCollarsStatus toDto(PetEntity petEntity);
 
+    @Mapping(source = "breedEntity", target = "breed")
+    @Mapping(source = "collarEntity", target = "collar")
     @Mapping(source = ".", target = "petMainPhotoUrl")
     PetDetailResponse toDtoDetail(PetEntity petEntity);
 

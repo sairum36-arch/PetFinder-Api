@@ -1,5 +1,6 @@
 package com.PetFinder.PetFinder.dto.Incident;
 
+import com.PetFinder.PetFinder.dto.CoordinateDto;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,4 +13,5 @@ public class IncidentBriefResponse {
     private BigDecimal reward;
     private LocalDateTime startedAt;
     private Double distanceToUserKm;
+    private CoordinateDto lastKnownLocation;
 }

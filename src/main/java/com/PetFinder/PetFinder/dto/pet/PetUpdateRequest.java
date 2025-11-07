@@ -9,4 +9,5 @@ public class PetUpdateRequest {
     private Long weight;
     private Long age;
     private String mainPhotoKey;
+    private String deviceId;
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="9-insert-all-breeds" author="Nikita">
+
+        <delete tableName="breeds">
+            <where>name IN ('Золотистый ретривер', 'Немецкая овчарка', 'Бигль')</where>
+        </delete>
+
+        <loadData
+                encoding="UTF-8"
+                file="db/changelog/data/breeds.csv"
+        relativeToChangelogFile="false"
+        quotchar='"'
+        separator=","
+        tableName="breeds">
+        <column name="name" type="STRING"/>
+    </loadData>
+</changeSet>
+
+        </databaseChangeLog>
+
+  

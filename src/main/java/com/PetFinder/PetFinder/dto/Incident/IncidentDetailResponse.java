@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 public class IncidentDetailResponse {
@@ -17,4 +18,5 @@ public class IncidentDetailResponse {
     private CoordinateDto lastKnownLocation;
     private PetInfo petInfo;
     private UserInfo ownerInfo;
+    private List<Long> helperIds;
 }
