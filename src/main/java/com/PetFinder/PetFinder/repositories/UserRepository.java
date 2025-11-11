@@ -13,6 +13,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query("SELECT u FROM UserEntity u WHERE u.credentialEntity.email = :email")
     Optional<UserEntity> findByEmail(@Param("email")String email);
+
     @Query("SELECT u FROM UserEntity u " +
             "LEFT JOIN FETCH u.credentialEntity " +
             "LEFT JOIN FETCH u.petEntities p " +

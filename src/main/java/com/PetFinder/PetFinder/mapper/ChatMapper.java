@@ -11,10 +11,10 @@ import org.mapstruct.Mapping;
 public interface ChatMapper {
     @Mapping(source = "incident.id", target = "incidentId")
     @Mapping(source = "incident.petEntity.name", target = "petName")
-    @Mapping(source = "incident.petEntity", target = "petMainPhotoUrl") // MapStruct вызовет метод из UrlBuilderService
+    @Mapping(source = "incident.petEntity", target = "petMainPhotoUrl")
     @Mapping(source = "lastMessage.messageText", target = "lastMessageText")
     @Mapping(source = "lastMessage.sentAt", target = "lastMessageSentAt")
     @Mapping(source = "lastMessage.sender.id", target = "lastMessageSenderId")
-    @Mapping(target = "unreadMessagesCount", constant = "0") // Пока ставим заглушку
+    @Mapping(target = "unreadMessagesCount", constant = "0")
     ChatListItemResponse toChatListItem(IncidentEntity incident, IncidentMessageEntity lastMessage);
 }

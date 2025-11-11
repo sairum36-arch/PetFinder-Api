@@ -36,7 +36,8 @@ public class IncidentService {
     private final IncidentParticipationRepository participationRepository;
     private final CollarDataProcessService collarDataProcessService;
     private final NotificationService notificationService;
-    private static final Logger log = LoggerFactory.getLogger(IncidentService.class);
+
+
     public IncidentBriefResponse createIncident(CredentialEntity currentUser, IncidentCreateRequest dto){
         PetEntity petIncident = petRepository.findById(dto.getPetId()).orElseThrow(() -> new EntityNotFoundException("Питомец с id " + dto.getPetId() + " не найден"));
         if(!petIncident.getUserEntity().getId().equals(currentUser.getUserId())){
