@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
@@ -22,6 +23,11 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
             "WHERE u.credentialEntity.email = :email")
     Optional<UserEntity> findUserDetailsByEmail(@Param("email") String email);
 
+
+    @Query(value = "SELECT " + " (SELECT COUNT(*) FROM users) AS totalUsers, " +
+    "  (SELECT COUNT(*) FROM pets) AS totalPets," +
+            " (SELECT COUNT(*) FROM incidents WHERE status = 'ACTIVE') AS activeIncidents", nativeQuery = true)
+    Map<String, Object> getStatisticsSumm();
 
 }
 

@@ -11,7 +11,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "pets")
-public class PetEntity {
+public class PetEntity extends  AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pets_id_generator")
     @SequenceGenerator(name = "pets_id_generator", sequenceName = "pets_id_seq", allocationSize = 1)

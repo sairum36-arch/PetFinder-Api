@@ -14,14 +14,14 @@
         <loadData
                 encoding="UTF-8"
                 file="db/changelog/data/breeds.csv"
-        relativeToChangelogFile="false"
-        quotchar='"'
-        separator=","
-        tableName="breeds">
-        <column name="name" type="STRING"/>
-    </loadData>
-</changeSet>
+                relativeToChangelogFile="false"
+                quotchar='"'
+                separator=","
+                tableName="breeds">
+            <column name="name" type="STRING"/>
+        </loadData>
+    </changeSet>
 
-        </databaseChangeLog>
+</databaseChangeLog>
 
   

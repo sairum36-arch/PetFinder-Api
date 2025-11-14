@@ -20,6 +20,8 @@ services:
   postgres-db:
     image: postgis/postgis:15-3.3-alpine
     container_name: petfinder-db
+    ports:
+      - "5499:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1

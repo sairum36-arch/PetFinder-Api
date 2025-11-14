@@ -12,7 +12,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "collars")
-public class CollarEntity {
+public class CollarEntity extends  AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "collars_id_generator")
     @SequenceGenerator(name = "collars_id_generator", sequenceName = "collars_id_seq", allocationSize = 1)

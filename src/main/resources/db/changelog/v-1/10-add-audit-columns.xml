@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="10-add-audit-columns" author="Nikita">
+
+        <addColumn tableName="users">
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="pets">
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="incidents">
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+        <addColumn tableName="collars">
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </addColumn>
+
+        <update tableName="users"><column name="created_at" valueComputed="CURRENT_TIMESTAMP"/><where>created_at IS NULL</where></update>
+        <update tableName="users"><column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/><where>updated_at IS NULL</where></update>
+
+        <update tableName="pets"><column name="created_at" valueComputed="CURRENT_TIMESTAMP"/><where>created_at IS NULL</where></update>
+        <update tableName="pets"><column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/><where>updated_at IS NULL</where></update>
+
+        <update tableName="incidents"><column name="created_at" valueComputed="CURRENT_TIMESTAMP"/><where>created_at IS NULL</where></update>
+        <update tableName="incidents"><column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/><where>updated_at IS NULL</where></update>
+
+        <update tableName="collars"><column name="created_at" valueComputed="CURRENT_TIMESTAMP"/><where>created_at IS NULL</where></update>
+        <update tableName="collars"><column name="updated_at" valueComputed="CURRENT_TIMESTAMP"/><where>updated_at IS NULL</where></update>
+        <addNotNullConstraint tableName="users" columnName="created_at"/>
+        <addNotNullConstraint tableName="users" columnName="updated_at"/>
+        <addNotNullConstraint tableName="pets" columnName="created_at"/>
+        <addNotNullConstraint tableName="pets" columnName="updated_at"/>
+        <addNotNullConstraint tableName="incidents" columnName="created_at"/>
+        <addNotNullConstraint tableName="incidents" columnName="updated_at"/>
+        <addNotNullConstraint tableName="collars" columnName="created_at"/>
+        <addNotNullConstraint tableName="collars" columnName="updated_at"/>
+    </changeSet>
+
+</databaseChangeLog>
+

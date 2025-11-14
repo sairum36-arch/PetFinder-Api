@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name= "credentials")
-public class CredentialEntity implements UserDetails {
+public class CredentialEntity implements UserDetails  {
     @Id
     @Column(name="user_id")
     private Long userId;

@@ -12,7 +12,7 @@ import com.PetFinder.PetFinder.kafka.model.CollarDataDto;
 public class CollarDataConsumer {
     private final CollarDataProcessService dataProcessService;
 
-    @KafkaListener(topics = "collar-data-updates", groupId = "petfinder-group", errorHandler = "errorHandler")
+    @KafkaListener(topics = "collar-data-updates", groupId = "petfinder-group", containerFactory = "kafkaListenerContainerFactory")
     public void consume(CollarDataDto data) {
         log.info("Получены данные с Kafka: {}", data);
 

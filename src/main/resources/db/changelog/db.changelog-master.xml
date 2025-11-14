@@ -12,5 +12,6 @@
     <include file="v-1/07-add-avatar-to-user.xml" relativeToChangelogFile="true"/>
     <include file="v-1/08-insert-test-notifications.xml" relativeToChangelogFile="true"/>
     <include file="v-1/09-insert-all-breeds.xml" relativeToChangelogFile="true"/>
+    <include file="v-1/10-add-audit-columns.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
 

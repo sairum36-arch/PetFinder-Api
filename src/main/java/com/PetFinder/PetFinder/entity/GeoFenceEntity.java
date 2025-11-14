@@ -13,7 +13,7 @@ import org.locationtech.jts.geom.Polygon;
 @Setter
 @Entity
 @Table(name = "geofences")
-public class GeoFenceEntity {
+public class GeoFenceEntity  {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "geofences_id_generator")
     @SequenceGenerator(name = "geofences_id_generator", sequenceName = "geofences_id_seq", allocationSize = 1)

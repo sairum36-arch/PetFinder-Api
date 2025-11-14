@@ -15,7 +15,7 @@ import org.locationtech.jts.geom.Point;
 @Setter
 @Entity
 @Table(name = "incidents")
-public class IncidentEntity {
+public class IncidentEntity extends  AuditableEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "incidents_id_generator")
     @SequenceGenerator(name = "incidents_id_generator", sequenceName = "incidents_id_seq", allocationSize = 1)
