@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @Slf4j
 public class SheduledTasksService {
-
+    /*
     private final LocationHistoryRepository locationHistoryRepository;
 
     @Transactional
@@ -31,4 +31,6 @@ public class SheduledTasksService {
     public void cleanOldLocationHistoryTest(){
         cleanOldLocationHistory();
     }
+
+     */
 }

@@ -6,6 +6,7 @@
             http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet id="4-insert-users" author="Nikita">
+        <validCheckSum>any</validCheckSum>
         <insert tableName="users">
             <column name="name" value="Admin User"/>
             <column name="phone_number" value="+79990000001"/>
@@ -13,7 +14,7 @@
         <insert tableName="credentials">
             <column name="user_id" valueComputed="currval('users_id_seq')"/>
             <column name="email" value="admin@petfinder.com"/>
-            <column name="password" value="$2a$10$wKFXs3a.E5.X1wIe.j.dG./M0Gj8cPBMANv0XIXiXm6mZ.dG.u.ua"/>
+            <column name="password" value="1111"/>
             <column name="role" value="ADMIN"/>
         </insert>
         <insert tableName="users">
@@ -23,7 +24,17 @@
         <insert tableName="credentials">
             <column name="user_id" valueComputed="currval('users_id_seq')"/>
             <column name="email" value="nikita.test@example.com"/>
-            <column name="password" value="$2a$10$oLcX5V9GjKVZ5nujkfBP6.OAd3S7l7MljffVi.1GB7/H6/Fzm4RKG"/>
+            <column name="password" value="$2a$10$eP3s6FZYOMKPzN8CC9ONbeRL4bvS/5AHoJJFB/5zLhPvkomhLaaF."/>
+            <column name="role" value="USER"/>
+        </insert>
+        <insert tableName="users">
+            <column name="name" value="Demo User"/>
+            <column name="phone_number" value="+79990000003"/>
+        </insert>
+        <insert tableName="credentials">
+            <column name="user_id" valueComputed="currval('users_id_seq')"/>
+            <column name="email" value="demo@petfinder.com"/>
+            <column name="password" value="$2a$10$8.K119Z/uDky0DcyZpCneO5U.gVl9WAs0F56xN1PZ4.3A2iV7nF8q"/>
             <column name="role" value="USER"/>
         </insert>
     </changeSet>

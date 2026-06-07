@@ -55,29 +55,49 @@
         </sql>
     </changeSet>
 
+    <!-- ИЗМЕНЕННЫЙ БЛОК С КРАСИВЫМ МАРШРУТОМ -->
     <changeSet id="5-insert-incident-and-history" author="Nikita">
-        <!-- Историю перемещений оставляем для Рекса (collar_id = 1) -->
+        <!-- Рисуем маршрут из 6 точек для Рекса (collar_id = 1) -->
         <insert tableName="locations_history">
             <column name="collar_id" valueNumeric="1"/>
             <column name="location" value="SRID=4326;POINT(39.1800 51.6960)"/>
-            <column name="timestamp" value="2025-10-07T12:00:00Z"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '50 minutes'"/>
         </insert>
         <insert tableName="locations_history">
             <column name="collar_id" valueNumeric="1"/>
             <column name="location" value="SRID=4326;POINT(39.1825 51.6975)"/>
-            <column name="timestamp" value="2025-10-07T12:01:00Z"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '40 minutes'"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1850 51.7000)"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '30 minutes'"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1880 51.7020)"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '20 minutes'"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1910 51.7050)"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '10 minutes'"/>
+        </insert>
+        <insert tableName="locations_history">
+            <column name="collar_id" valueNumeric="1"/>
+            <column name="location" value="SRID=4326;POINT(39.1950 51.7080)"/>
+            <column name="timestamp" valueComputed="CURRENT_TIMESTAMP - INTERVAL '5 minutes'"/>
         </insert>
 
+        <!-- Инцидент тоже делаем "свежим", чтобы он 100% отображался в приложении -->
         <insert tableName="incidents">
             <column name="pet_id" valueNumeric="2"/>
             <column name="status" value="ACTIVE"/>
             <column name="reward" valueNumeric="1000.00"/>
             <column name="last_known_location" value="SRID=4326;POINT(39.2323 51.6616)"/>
-            <column name="started_at" value="2025-10-07T14:00:00Z"/>
+            <column name="started_at" valueComputed="CURRENT_TIMESTAMP - INTERVAL '1 hour'"/>
             <column name="owners_notes" value="Очень пугливый, может не подходить к чужим. Пожалуйста, сразу звоните!"/>
         </insert>
     </changeSet>
 
 </databaseChangeLog>
-
-  

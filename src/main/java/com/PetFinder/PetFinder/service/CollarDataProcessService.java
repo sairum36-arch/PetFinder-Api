@@ -3,12 +3,10 @@ package com.PetFinder.PetFinder.service;
 import com.PetFinder.PetFinder.dto.websocket.CollarStatusUpdateMessage;
 import com.PetFinder.PetFinder.dto.websocket.LocationUpdateDto;
 import com.PetFinder.PetFinder.dto.websocket.LocationUpdateMessage;
-import com.PetFinder.PetFinder.entity.CollarEntity;
-import com.PetFinder.PetFinder.entity.GeoFenceEntity;
-import com.PetFinder.PetFinder.entity.NotificationType;
-import com.PetFinder.PetFinder.entity.UserEntity;
+import com.PetFinder.PetFinder.entity.*;
 import com.PetFinder.PetFinder.kafka.model.CollarDataDto;
 import com.PetFinder.PetFinder.repositories.CollarRepository;
+import com.PetFinder.PetFinder.repositories.LocationHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.locationtech.jts.geom.Coordinate;
@@ -17,6 +15,8 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,6 +27,7 @@ public class CollarDataProcessService {
     private final NotificationService notificationService;
     private final GeometryFactory geometryFactory = new GeometryFactory();
     private final SimpMessagingTemplate messagingTemplate;
+    private final LocationHistoryRepository locationHistoryRepository;
     private static final byte BATTERY_THRESHOLD = 20;
 
 
@@ -40,7 +41,7 @@ public class CollarDataProcessService {
         });
     }
 
-    private  void processBatteryUpdate(CollarEntity collar, byte newBatteryLevel){
+    private void processBatteryUpdate(CollarEntity collar, byte newBatteryLevel){
          Byte oldBatteryLevel = collar.getBatteryLevel();
          if(newBatteryLevel < BATTERY_THRESHOLD && (oldBatteryLevel == null || oldBatteryLevel >= BATTERY_THRESHOLD)){
              UserEntity owner = collar.getPetEntity().getUserEntity();
@@ -54,10 +55,10 @@ public class CollarDataProcessService {
     private void processLocationUpdate(CollarEntity collar, Point newLocation) {
         List<GeoFenceEntity> geofences = collar.getPetEntity().getGeoFenceEntities();
         Point lastLocation = collar.getLastLocation();
-        if (geofences != null && !geofences.isEmpty() && lastLocation != null) {
+        if (geofences != null && !geofences.isEmpty()) {
             for (GeoFenceEntity geofence : geofences) {
                 boolean isInside = geofence.getArea().contains(newLocation);
-                boolean wasInside = geofence.getArea().contains(lastLocation);
+                boolean wasInside = (lastLocation != null) ? geofence.getArea().contains(lastLocation) : true;
                 if (wasInside && !isInside) {
                     UserEntity owner = collar.getPetEntity().getUserEntity();
                     String petName = collar.getPetEntity().getName();
@@ -67,6 +68,11 @@ public class CollarDataProcessService {
             }
         }
         collar.setLastLocation(newLocation);
+        LocationHistoryEntity historyEntry = new LocationHistoryEntity();
+        historyEntry.setCollarEntity(collar);
+        historyEntry.setLocation(newLocation);
+        historyEntry.setTimestamp(LocalDateTime.now());
+        locationHistoryRepository.save(historyEntry);
         Long petId = collar.getPetEntity().getId();
         Long userId = collar.getPetEntity().getUserEntity().getId();
         String destination = "/topic/user-locations/" + userId;
